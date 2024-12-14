@@ -80,8 +80,8 @@ class AddFamilyMemberViewController: UIViewController {
         let button = UIButton(type: .system)
         button.setTitle("Add Family Member", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
-        button.backgroundColor = .systemGreen
-        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = UIColor.systemGreen.withAlphaComponent(0.2)
+        button.setTitleColor(.systemGreen, for: .normal)
         button.layer.cornerRadius = 12
         button.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         return button
@@ -233,7 +233,8 @@ class AddFamilyMemberViewController: UIViewController {
             relationship: relationship,
             phone: phone,
             email: email,
-            imageName: "familyImg"
+            imageName: "familyImg",
+            imageURL: "https://as1.ftcdn.net/v2/jpg/02/99/04/20/1000_F_299042079_vGBD7wIlSeNl7vOevWHiL93G4koMM967.jpg"
         )
         
         familyMembers.append(newMember)

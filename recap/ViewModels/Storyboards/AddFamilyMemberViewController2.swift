@@ -88,7 +88,8 @@ class AddFamilyMemberViewController2: UIViewController {
             relationship: relationship,
             phone: phone,
             email: email,
-            imageName: "familyImg"
+            imageName: "familyImg",
+            imageURL: "https://as1.ftcdn.net/v2/jpg/02/99/04/20/1000_F_299042079_vGBD7wIlSeNl7vOevWHiL93G4koMM967.jpg"
         )
         
         familyMembers.append(newMember)

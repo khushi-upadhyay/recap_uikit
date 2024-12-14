@@ -97,3 +97,6 @@ class ArticleTableViewCell: UITableViewCell {
         subtitleLabel.text = article.subtitle
     }
 }
+#Preview(){
+    ArticleTableViewCell()
+}

@@ -31,7 +31,7 @@ class QuestionCell: UITableViewCell {
     private let iconImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "questionmark.circle.fill")
-        imageView.tintColor = .systemGreen
+        imageView.tintColor = .systemOrange
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
@@ -123,5 +123,6 @@ class QuestionCell: UITableViewCell {
     func configure(with question: Question) {
         titleLabel.text = question.text
 //        descriptionLabel.text = question.description
+        iconImageView.tintColor = question.isAnswered ? .systemGreen : .systemOrange
     }
 }

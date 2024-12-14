@@ -30,7 +30,7 @@ class ActivityCell: UITableViewCell {
     private let descriptionLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
-        label.textColor = .secondaryLabel
+        label.textColor = .gray
         label.numberOfLines = 0
         return label
     }()

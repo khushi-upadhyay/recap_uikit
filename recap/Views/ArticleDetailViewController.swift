@@ -35,6 +35,7 @@ class ArticleDetailViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 30)
+        label.textColor = .label
         label.numberOfLines = 0
         label.lineBreakMode = .byWordWrapping
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -47,7 +48,7 @@ class ArticleDetailViewController: UIViewController {
         textView.isScrollEnabled = false
         textView.textContainerInset = UIEdgeInsets(top: 10, left: 5, bottom: 10, right: 5)
         textView.font = UIFont.systemFont(ofSize: 20)
-        textView.textColor = .darkGray
+        textView.textColor = .label
         textView.translatesAutoresizingMaskIntoConstraints = false
         return textView
     }()
@@ -64,7 +65,7 @@ class ArticleDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         title = article.title
         setupLayout()
 

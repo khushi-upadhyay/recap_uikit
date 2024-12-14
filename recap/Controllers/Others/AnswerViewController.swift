@@ -8,8 +8,10 @@
 import Foundation
 import UIKit
 class AnswerViewController: UIViewController {
+    
+    var onAnswerSubmitted: (() -> Void)?
 
-    private let question: Question
+    private var question: Question
     
     private let gradientLayer = CAGradientLayer()
     
@@ -141,6 +143,7 @@ class AnswerViewController: UIViewController {
 
     @objc private func didTapSubmit() {
         print("Selected Ans:" , selectedButton?.titleLabel?.text ?? "")
+        print(question.isAnswered)
         guard selectedButton != nil else {
             let alert = UIAlertController(
                 title: "No Selection",
@@ -151,7 +154,9 @@ class AnswerViewController: UIViewController {
             present(alert, animated: true)
             return
         }
-
+        
+        question.isAnswered = true
+        print(question.isAnswered)
         let alert = UIAlertController(
             title: "Great Work, Keep Going!!",
             message: "Studies show that consistent mental exercises can improve cognitive function by up to 20%",
@@ -159,6 +164,7 @@ class AnswerViewController: UIViewController {
         )
 
         alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { [weak self] _ in
+            self?.onAnswerSubmitted?()
             self?.dismiss(animated: true, completion: nil)
         }))
 

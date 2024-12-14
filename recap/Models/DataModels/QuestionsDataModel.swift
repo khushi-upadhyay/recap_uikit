@@ -30,4 +30,5 @@ struct Question: Identifiable, Codable {
     var subcategory: QuestionSubcategory
     var tag: String? // e.g., "Medication", "Eating", etc.
     var answerOptions: [String]
+    var isAnswered: Bool
 }

@@ -81,7 +81,7 @@ class GamesCell: UICollectionViewCell {
 
         accessoryIcon.frame = CGRect(x: contentView.frame.size.width - 25, y: dividerLine.frame.maxY + 8, width: 15, height: 15)
 
-        descriptionLabel.frame = CGRect(x: 10, y: nameLabel.frame.maxY + 5, width: contentView.frame.size.width - 20, height: 18)
+        descriptionLabel.frame = CGRect(x: 10, y: nameLabel.frame.maxY + 5, width: contentView.frame.size.width - 20, height: 20)
     }
 
     required init?(coder: NSCoder) {

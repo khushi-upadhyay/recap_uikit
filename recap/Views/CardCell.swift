@@ -30,7 +30,7 @@ class CardCell: UICollectionViewCell {
     private let descriptionLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
-        label.textColor = .secondaryLabel
+        label.textColor = .gray
         label.textAlignment = .left
         label.numberOfLines = 0
         return label

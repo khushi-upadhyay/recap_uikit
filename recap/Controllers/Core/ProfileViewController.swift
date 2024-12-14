@@ -6,12 +6,22 @@
 //
 import Foundation
 import UIKit
+import SDWebImage
 
 class ProfileViewController: UIViewController {
     
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "person.circle")
+        imageView.sd_setImage(
+            with: URL(string: "https://portfoliodata.djdiptayan.in/profile_pics/dj.png"),
+            placeholderImage: UIImage(named: "person.circle"),
+            options: [.retryFailed, .highPriority],
+            completed: { image, error, cacheType, url in
+                if error != nil {
+                    imageView.image = UIImage(named: "person.circle")
+                }
+            }
+        )
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 10
         imageView.clipsToBounds = true
@@ -24,7 +34,7 @@ class ProfileViewController: UIViewController {
     
     private let nameLabel: UILabel = {
         let label = UILabel()
-        label.text = "John Doe"
+        label.text = "Diptayan Jash"
         label.font = .systemFont(ofSize: 20, weight: .semibold)
         label.textAlignment = .center
         return label
@@ -35,12 +45,16 @@ class ProfileViewController: UIViewController {
         return table
     }()
     
+    private var prefetchedQuestions: [rapiMemory]?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         setupNavigationBar()
         setupUI()
         setupTableView()
+        
+        prefetchQuestions()
     }
     
     private func setupNavigationBar() {
@@ -91,6 +105,16 @@ class ProfileViewController: UIViewController {
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
     }
+    
+    private func prefetchQuestions() {
+        let dataFetch = DataFetch()
+        dataFetch.fetchRapidQuestions { [weak self] questions, error in
+            if let questions = questions {
+                self?.prefetchedQuestions = questions
+            }
+        }
+    }
+
 }
 
 // MARK: - UITableViewDelegate & DataSource
@@ -128,12 +152,12 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                 "Blood Type"
             ]
             let values = [
-                "John",
-                "Doe",
-                "01/01/1950",
+                "Diptayan",
+                "Jash",
+                "31/03/2003",
                 "Male",
-                "74",
-                "O+"
+                "21",
+                "B+"
             ]
             
             cell.textLabel?.text = titles[indexPath.row]
@@ -142,7 +166,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             cell.selectionStyle = .none
             
         case 1:
-            cell.textLabel?.text = "Memory Check Results"
+            cell.textLabel?.text = "Memory Check"
             cell.detailTextLabel?.text = "Last check: Today"
             cell.imageView?.image = UIImage(systemName: "brain.head.profile")
             cell.imageView?.tintColor = .systemGreen
@@ -166,10 +190,19 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        if indexPath.section == 2 {
+        if indexPath.section == 1 && indexPath.row == 0 {
+            // Memory Check cell tapped
+            let memoryCheckVC = MemoryCheckViewController()
+            
+            // Pass the pre-fetched questions
+            memoryCheckVC.preloadedQuestions = prefetchedQuestions
+            
+            navigationController?.pushViewController(memoryCheckVC, animated: true)
+        } else if indexPath.section == 2 {
             logoutTapped()
         }
     }
+
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 class FamilyMemberDetailViewController: UIViewController {
     var member: FamilyMember
@@ -84,13 +85,18 @@ class FamilyMemberDetailViewController: UIViewController {
 
     private func createProfileImageView() -> UIImageView {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: member.imageName)
+//        imageView.image = UIImage(named: member.imageName)
+        imageView
+            .sd_setImage(
+                with: URL(string: member.imageURL),
+                placeholderImage: UIImage(named: "placeholder")
+            )
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 10
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.widthAnchor.constraint(equalToConstant: 200).isActive = true
-        imageView.heightAnchor.constraint(equalToConstant: 200).isActive = true
+        imageView.widthAnchor.constraint(equalToConstant: 150).isActive = true
+        imageView.heightAnchor.constraint(equalToConstant: 150).isActive = true
         return imageView
     }
 

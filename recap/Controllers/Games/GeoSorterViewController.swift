@@ -11,13 +11,6 @@ class GeoSorterViewController: UIViewController {
     private var score = 0
     private var answeredWords: [String: String] = [:]
 
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .boldSystemFont(ofSize: 24)
-        label.text = "Word Game"
-        return label
-    }()
-
     private let subtitleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16)
@@ -101,14 +94,14 @@ class GeoSorterViewController: UIViewController {
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            scoreLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-            scoreLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            
-            subtitleLabel.topAnchor.constraint(equalTo: scoreLabel.bottomAnchor, constant: 16),
+            subtitleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
             subtitleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
             subtitleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
             
-            categoriesStack.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 20),
+            scoreLabel.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 16),
+            scoreLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            categoriesStack.topAnchor.constraint(equalTo: scoreLabel.bottomAnchor, constant: 20),
             categoriesStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             categoriesStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             categoriesStack.heightAnchor.constraint(equalToConstant: 200),
@@ -147,6 +140,8 @@ class GeoSorterViewController: UIViewController {
             let row = index / wordsPerRow
             let wordLabel = createWordLabel(for: wordInfo.word, category: wordInfo.category)
             
+            wordLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 60).isActive = true
+            
             switch row {
             case 0: rowStack1.addArrangedSubview(wordLabel)
             case 1: rowStack2.addArrangedSubview(wordLabel)
@@ -159,27 +154,39 @@ class GeoSorterViewController: UIViewController {
     private func createHorizontalWordStack() -> UIStackView {
         let stack = UIStackView()
         stack.axis = .horizontal
-        stack.spacing = 15
-        stack.distribution = .fillEqually
+        stack.spacing = 8
+        stack.distribution = .fillProportionally
         stack.alignment = .center
+    
+        stack.layoutMargins = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
+        stack.isLayoutMarginsRelativeArrangement = true
+        
         return stack
     }
     
     private func createWordLabel(for word: String, category: String) -> UILabel {
         let label = UILabel()
         label.text = word
-        label.font = .systemFont(ofSize: 18, weight: .semibold)
+        label.font = .systemFont(ofSize: 16, weight: .semibold)
         label.textAlignment = .center
         label.backgroundColor = .systemIndigo.withAlphaComponent(0.1)
-        label.layer.cornerRadius = 14
+        label.layer.cornerRadius = 12
         label.layer.borderWidth = 1.5
         label.layer.borderColor = UIColor.systemIndigo.cgColor
         label.layer.masksToBounds = true
         label.isUserInteractionEnabled = true
         label.tag = category.hashValue
         
-        let minHeight: CGFloat = 50
-        label.heightAnchor.constraint(equalToConstant: minHeight).isActive = true
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.7
+        label.numberOfLines = 1
+        
+        label.setContentHuggingPriority(.required, for: .horizontal)
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        
+        label.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12)
+        
+        label.heightAnchor.constraint(equalToConstant: 40).isActive = true
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(wordTapped(_:)))
         label.addGestureRecognizer(tap)
@@ -221,12 +228,9 @@ class GeoSorterViewController: UIViewController {
             score += 10
             scoreLabel.text = "Score: \(score)"
             
-            // Get the position of the correct category stack
             if let categoryStack = categoryStacks.first(where: { $0.category == correctCategory }) {
-                // Get the final position for animation
                 let finalFrame = categoryStack.containerView.convert(categoryStack.containerView.bounds, to: view)
                 
-                // Create a temporary label for animation
                 let animatingLabel = UILabel(frame: label.convert(label.bounds, to: view))
                 animatingLabel.text = word
                 animatingLabel.font = label.font
@@ -236,13 +240,12 @@ class GeoSorterViewController: UIViewController {
                 animatingLabel.layer.masksToBounds = true
                 view.addSubview(animatingLabel)
                 
-                // Animate the label moving to the category
                 UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseInOut) {
                     animatingLabel.frame = CGRect(
-                        x: finalFrame.midX - 50, // Adjust width as needed
+                        x: finalFrame.midX - 50,
                         y: finalFrame.minY + 10,
-                        width: 100, // Fixed width for animation
-                        height: 40  // Fixed height for animation
+                        width: 100,
+                        height: 40
                     )
                 } completion: { _ in
                     // Remove the animating label
@@ -366,4 +369,8 @@ extension UIView {
         animation.values = [-10.0, 10.0, -10.0, 10.0, -5.0, 5.0, -2.5, 2.5, 0.0]
         layer.add(animation, forKey: "shake")
     }
+}
+
+#Preview(){
+    GeoSorterViewController()
 }

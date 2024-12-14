@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 class FamilyMemberCell: UICollectionViewCell {
     static let identifier = "FamilyMemberCell"
@@ -98,9 +99,14 @@ class FamilyMemberCell: UICollectionViewCell {
     }
 
     func configure(with familyMember: FamilyMember) {
-        imageView.image = UIImage(named: familyMember.imageName)
+//        imageView.image = UIImage(named: familyMember.imageName)
+        imageView.sd_setImage(with: URL(string: familyMember.imageURL), placeholderImage: UIImage(named: "placeholder"))
         nameLabel.text = familyMember.name
         relationshipLabel.text = familyMember.relationship
         phoneLabel.text = familyMember.phone
     }
+}
+
+#Preview(){
+    FamilyMemberCell()
 }

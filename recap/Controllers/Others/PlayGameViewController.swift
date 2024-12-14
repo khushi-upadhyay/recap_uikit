@@ -82,3 +82,6 @@ class PlayGameViewController: UIViewController, UICollectionViewDelegate, UIColl
         return cell
     }
 }
+#Preview(){
+    PlayGameViewController()
+}

@@ -7,6 +7,7 @@
 
 import UIKit
 import Foundation
+import SDWebImage
 class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
@@ -51,7 +52,10 @@ class HomeViewController: UIViewController {
     private lazy var profileButton: UIButton = {
         let button = UIButton(type: .system)
         let config = UIImage.SymbolConfiguration(pointSize: 28, weight: .medium)
-        let image = UIImage(systemName: "person.circle.fill", withConfiguration: config)
+        let image = UIImage(
+            systemName: "person.circle.fill",
+            withConfiguration: config
+        )
         button.setImage(image, for: .normal)
         button.tintColor = .systemGreen
         button.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
@@ -77,10 +81,11 @@ class HomeViewController: UIViewController {
         // MARK: - This works
 //    override func viewDidAppear(_ animated: Bool) {
 //        let accessoryView = UIButton()
-//        let image = UIImage(named:"avatar")
+//        let image = UIImage(named:"dj")
 //
 //        accessoryView.setImage(image, for: .normal)
 //        accessoryView.frame.size = CGSize(width: 34, height: 34)
+//        accessoryView.clipsToBounds = true
 //        accessoryView.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
 //        let largeTitleView = navigationController?.navigationBar.subviews.first { subview in
 //            return String(describing: type(of: subview)) == "_UINavigationBarLargeTitleView"
@@ -102,6 +107,11 @@ class HomeViewController: UIViewController {
         let profileVC = ProfileViewController()
         let navController = UINavigationController(rootViewController: profileVC)
         present(navController, animated: true)
+        
+//        let userDetailsVC = patientInfo()
+//        let nav = UINavigationController(rootViewController: userDetailsVC)
+//        present(nav, animated: true)
+        
 //        let storyboard = UIStoryboard(name: "ProfileSection", bundle: nil)
 //        if let profileVC = storyboard.instantiateViewController(withIdentifier: "ProfileViewController2") as? ProfileViewController2 {
 //            self.present(profileVC, animated: true, completion: nil)

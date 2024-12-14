@@ -76,3 +76,6 @@ class CategoryStackView: UIStackView {
         wordsStack.addArrangedSubview(label)
     }
 }
+#Preview(){
+    CategoryStackView(title: "George")
+}

@@ -68,17 +68,24 @@ class QuestionsViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
-        let selectedQuestion = randomQuestions[indexPath.row]
-        
-        let answerVC = AnswerViewController(question: selectedQuestion)
-        let navController = UINavigationController(rootViewController: answerVC)
-        if let sheet = navController.sheetPresentationController{
-            sheet.detents = [.large()]
-            sheet.prefersGrabberVisible = true
-            sheet.prefersEdgeAttachedInCompactHeight = true
-        }
-        present(navController, animated: true, completion: nil)
+            
+            let selectedQuestion = randomQuestions[indexPath.row]
+            let answerVC = AnswerViewController(question: selectedQuestion)
+            
+            answerVC.onAnswerSubmitted = { [weak self] in
+                guard let self = self else { return }
+                self.randomQuestions[indexPath.row].isAnswered = true
+                self.tableView.reloadRows(at: [indexPath], with: .none)
+            }
+
+            let navController = UINavigationController(rootViewController: answerVC)
+            navController.modalPresentationStyle = .pageSheet
+            if let sheet = navController.sheetPresentationController {
+                sheet.detents = [.large()]
+                sheet.prefersGrabberVisible = true
+                sheet.prefersEdgeAttachedInCompactHeight = true
+            }
+            present(navController, animated: true, completion: nil)
     }
 }
 

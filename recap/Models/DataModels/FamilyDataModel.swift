@@ -27,4 +27,5 @@ struct FamilyMember: Identifiable, Equatable {
     let phone: String
     let email: String
     let imageName: String
+    let imageURL: String
 }

@@ -55,6 +55,7 @@ class FamilyViewController: UIViewController, UICollectionViewDelegate, UICollec
 
     @objc private func handleFamilyMemberAdded() {
         collectionView.reloadData()
+        
     }
 
 
@@ -92,26 +93,26 @@ class FamilyViewController: UIViewController, UICollectionViewDelegate, UICollec
 
     @objc private func didTapAdd() {
         print("Add button tapped")
-//        let AddFamily = AddFamilyMemberViewController()
-//        let navController = UINavigationController(rootViewController: AddFamily)
-//        if let sheet = navController.sheetPresentationController {
-//            sheet.detents = [.large()]
-//            sheet.prefersGrabberVisible = true
-//            sheet.prefersEdgeAttachedInCompactHeight = true
-//        }
-//        present(navController, animated: true, completion: nil)
+        let AddFamily = AddFamilyMemberViewController()
+        let navController = UINavigationController(rootViewController: AddFamily)
+        if let sheet = navController.sheetPresentationController {
+            sheet.detents = [.large()]
+            sheet.prefersGrabberVisible = true
+            sheet.prefersEdgeAttachedInCompactHeight = true
+        }
+        present(navController, animated: true, completion: nil)
 
         // FOR STORYBOARD METHOD
-        let storyboard = UIStoryboard(name: "AddFamily", bundle: nil)
-        if let profileVC = storyboard.instantiateViewController(withIdentifier: "AddFamilyMemberViewController2") as? AddFamilyMemberViewController2 {
-            let navigationController = UINavigationController(rootViewController: profileVC)
-            if let sheet = navigationController.sheetPresentationController {
-                sheet.detents = [.large()]
-                sheet.prefersGrabberVisible = true
-                sheet.prefersEdgeAttachedInCompactHeight = true
-            }
-            present(navigationController, animated: true, completion: nil)
-        }
+//        let storyboard = UIStoryboard(name: "AddFamily", bundle: nil)
+//        if let profileVC = storyboard.instantiateViewController(withIdentifier: "AddFamilyMemberViewController2") as? AddFamilyMemberViewController2 {
+//            let navigationController = UINavigationController(rootViewController: profileVC)
+//            if let sheet = navigationController.sheetPresentationController {
+//                sheet.detents = [.large()]
+//                sheet.prefersGrabberVisible = true
+//                sheet.prefersEdgeAttachedInCompactHeight = true
+//            }
+//            present(navigationController, animated: true, completion: nil)
+//        }
     }
 
     // MARK: - Collection View Data Source
