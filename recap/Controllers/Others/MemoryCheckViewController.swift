@@ -8,13 +8,13 @@ class MemoryCheckViewController: UIViewController {
         let label = UILabel()
         label.numberOfLines = 0
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 20, weight: .medium)
+        label.font = .boldSystemFont(ofSize: 22)
         return label
     }()
     
     private let optionsStackView: UIStackView = {
         let stack = UIStackView()
-        stack.axis = .vertical
+        stack.axis = .horizontal
         stack.spacing = 12
         stack.distribution = .fillEqually
         return stack
@@ -25,6 +25,7 @@ class MemoryCheckViewController: UIViewController {
         button.setTitle("Submit", for: .normal)
         button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 8
+        button.titleLabel?.font = .systemFont(ofSize: 20, weight: .heavy)
         button.isEnabled = false
         return button
     }()
@@ -37,11 +38,11 @@ class MemoryCheckViewController: UIViewController {
     }()
     
     // MARK: - Properties
-    private var questions = [rapiMemory]()  // Now the questions come from Firebase
+    private var questions = [rapiMemory]()
     private var currentQuestionIndex = 0
     private var selectedAnswer: String?
     private var score = 0
-    private var userAnswers: [String] = []  // Add this property to track answers
+    private var userAnswers: [String] = []
     var preloadedQuestions: [rapiMemory]?
     private var viewModel: MemoryViewModelProtocol?
     
@@ -59,19 +60,16 @@ class MemoryCheckViewController: UIViewController {
         }
     }
 
-    
     // MARK: - Setup UI
     private func setupUI() {
         view.backgroundColor = .systemBackground
         title = "Memory Check"
         
-        // Add subviews
         [questionLabel, optionsStackView, submitButton, progressLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
         
-        // Layout constraints
         NSLayoutConstraint.activate([
             questionLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
             questionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -111,8 +109,7 @@ class MemoryCheckViewController: UIViewController {
                     self?.present(alert, animated: true)
                 }
             }
-        }
-        )
+        })
     }
     
     // MARK: - Display Current Question
@@ -135,6 +132,7 @@ class MemoryCheckViewController: UIViewController {
             button.setTitleColor(.white, for: .normal)
             button.backgroundColor = .systemGray
             button.layer.cornerRadius = 8
+            button.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)  // Set bold text for options
             button.addTarget(self, action: #selector(optionSelected(_:)), for: .touchUpInside)
             optionsStackView.addArrangedSubview(button)
         }
@@ -194,4 +192,8 @@ class MemoryCheckViewController: UIViewController {
         
         present(alertController, animated: true)
     }
+}
+
+#Preview{
+    MemoryCheckViewController()
 }

@@ -15,5 +15,4 @@ class DataUpload: DataUploadProtocol {
     func saveUserDetails(_ details: UserDetails, completion: @escaping (Error?) -> Void) {
         // Fire base Manager
     }
-
 }

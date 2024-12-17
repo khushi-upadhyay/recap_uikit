@@ -5,8 +5,8 @@
 //  Created by Diptayan Jash on 05/11/24.
 //
 
-import UIKit
 import SDWebImage
+import UIKit
 
 class FamilyMemberDetailViewController: UIViewController {
     var member: FamilyMember
@@ -25,10 +25,10 @@ class FamilyMemberDetailViewController: UIViewController {
         super.viewDidLoad()
         setLayout()
     }
-    
+
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        
+
         coordinator.animate(alongsideTransition: { _ in
             self.updateLayout(for: size)
         })
@@ -48,7 +48,7 @@ class FamilyMemberDetailViewController: UIViewController {
 
         let callButton = createCallButton()
         callButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
-        
+
         let detailsStack = UIStackView(arrangedSubviews: [nameLabel, relationshipLabel, phoneStack, emailStack, callButton])
         detailsStack.axis = .vertical
         detailsStack.spacing = 10
@@ -65,9 +65,9 @@ class FamilyMemberDetailViewController: UIViewController {
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
-        
+
         updateLayout(for: view.bounds.size)
     }
 
@@ -85,12 +85,17 @@ class FamilyMemberDetailViewController: UIViewController {
 
     private func createProfileImageView() -> UIImageView {
         let imageView = UIImageView()
+        if let savedImage = UserDefaultsStorageFamilyMember.shared.getFamilyMemberImage(for: member.id) {
+               imageView.image = savedImage
+           } else {
+               imageView.image = UIImage(systemName: "person.circle.fill")
+           }
 //        imageView.image = UIImage(named: member.imageName)
-        imageView
-            .sd_setImage(
-                with: URL(string: member.imageURL),
-                placeholderImage: UIImage(named: "placeholder")
-            )
+//        imageView
+//            .sd_setImage(
+//                with: URL(string: member.imageURL),
+//                placeholderImage: UIImage(named: "placeholder")
+//            )
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 10
         imageView.clipsToBounds = true
@@ -152,7 +157,7 @@ class FamilyMemberDetailViewController: UIViewController {
 
     @objc private func callPhoneNumber() {
         let generator = UIImpactFeedbackGenerator(style: .medium)
-            generator.impactOccurred()
+        generator.impactOccurred()
         guard let url = URL(string: "tel://\(member.phone)"), UIApplication.shared.canOpenURL(url) else {
             print("This device does not support phone calls.")
             return

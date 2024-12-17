@@ -9,7 +9,7 @@ import Foundation
 
 protocol DataFetchProtocol {
     func fetchRapidQuestions(completion: @escaping ([rapiMemory]?, Error?) -> Void)
-    func fetchInfo(completion: @escaping (String, Error?) -> Void)
+    func fetchPatientProfile(completion: @escaping (UserDetails?, Error?) -> Void)
     
 }
 
@@ -19,7 +19,9 @@ class DataFetch: DataFetchProtocol {
             completion(data, error)
         }
     }
-    func fetchInfo(completion: @escaping (String, Error?) -> Void) {
-        
-    }
+    func fetchPatientProfile(completion: @escaping (UserDetails?, Error?) -> Void) {
+            FirebaseManager.shared.fetchData(DBName: "PatientProfile") { (data: [UserDetails]?, error) in
+                completion(data?.first, error)
+            }
+        }
 }

@@ -5,18 +5,31 @@
 //  Created by Diptayan Jash on 11/11/24.
 //
 import Foundation
-import UIKit
 import SDWebImage
+import UIKit
 
 class ProfileViewController: UIViewController {
-    
+    private var userDetails: [String: Any]?
+
+    private let dataProtocol: ProfileStorageProtocol
+
+    init(storage: ProfileStorageProtocol = UserDefaultsStorageProfile.shared) {
+        dataProtocol = storage
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        dataProtocol = UserDefaultsStorageProfile.shared
+        super.init(coder: coder)
+    }
+
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.sd_setImage(
             with: URL(string: "https://portfoliodata.djdiptayan.in/profile_pics/dj.png"),
             placeholderImage: UIImage(named: "person.circle"),
             options: [.retryFailed, .highPriority],
-            completed: { image, error, cacheType, url in
+            completed: { _, error, _, _ in
                 if error != nil {
                     imageView.image = UIImage(named: "person.circle")
                 }
@@ -28,10 +41,10 @@ class ProfileViewController: UIViewController {
         imageView.widthAnchor.constraint(equalToConstant: 95).isActive = true
         imageView.heightAnchor.constraint(equalToConstant: 95).isActive = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         return imageView
     }()
-    
+
     private let nameLabel: UILabel = {
         let label = UILabel()
         label.text = "Diptayan Jash"
@@ -39,85 +52,100 @@ class ProfileViewController: UIViewController {
         label.textAlignment = .center
         return label
     }()
-    
+
     private let tableView: UITableView = {
         let table = UITableView(frame: .zero, style: .insetGrouped)
         return table
     }()
-    
+
     private var prefetchedQuestions: [rapiMemory]?
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        loadUserProfile()
         view.backgroundColor = .systemBackground
         setupNavigationBar()
         setupUI()
         setupTableView()
-        
+
         prefetchQuestions()
     }
-    
+
+    private func loadUserProfile() {
+        if let savedProfile = dataProtocol.getProfile() {
+            // Update UI with saved data
+            nameLabel.text = "\(savedProfile["firstName"] as? String ?? "") \(savedProfile["lastName"] as? String ?? "")"
+
+            // Load profile image
+            if let profileImage = dataProtocol.getProfileImage() {
+                profileImageView.image = profileImage
+            }
+
+            tableView.reloadData()
+        }
+    }
+
     private func setupNavigationBar() {
         navigationItem.largeTitleDisplayMode = .never
         let doneButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(doneButtonTapped)
         )
         navigationItem.rightBarButtonItem = doneButton
-        
-        if let sheet = self.sheetPresentationController {
+
+        if let sheet = sheetPresentationController {
             sheet.prefersGrabberVisible = true
             sheet.prefersEdgeAttachedInCompactHeight = true
             sheet.detents = [.medium(), .large()]
         }
     }
-    
+
     @objc private func doneButtonTapped() {
         dismiss(animated: true)
     }
-    
+
     private func setupUI() {
         [profileImageView, nameLabel, tableView].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
-        
+
         profileImageView.layer.cornerRadius = 50
         profileImageView.layer.masksToBounds = true
-        
+
         NSLayoutConstraint.activate([
             profileImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             profileImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             profileImageView.widthAnchor.constraint(equalToConstant: 95),
             profileImageView.heightAnchor.constraint(equalToConstant: 95),
-            
+
             nameLabel.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 16),
             nameLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             nameLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            
+
             tableView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 20),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
-    
+
     private func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
     }
-    
+
     private func prefetchQuestions() {
         let dataFetch = DataFetch()
-        dataFetch.fetchRapidQuestions { [weak self] questions, error in
+        dataFetch.fetchRapidQuestions { [weak self] questions, _ in
             if let questions = questions {
                 self?.prefetchedQuestions = questions
             }
         }
     }
-
 }
 
 // MARK: - UITableViewDelegate & DataSource
+
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return 3
@@ -149,16 +177,29 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                 "Date of Birth",
                 "Sex",
                 "Age",
-                "Blood Type"
+                "Blood Type",
             ]
-            let values = [
-                "Diptayan",
-                "Jash",
-                "31/03/2003",
-                "Male",
-                "21",
-                "B+"
-            ]
+            //            let values = [
+            //                "Diptayan",
+            //                "Jash",
+            //                "31/03/2003",
+            //                "Male",
+            //                "21",ˆ
+            //                "B+"
+            //            ]
+            let values: [String] = {
+                if let details = dataProtocol.getProfile() {
+                    return [
+                        details["firstName"] as? String ?? "Not Set",
+                        details["lastName"] as? String ?? "Not Set",
+                        details["dateOfBirth"] as? String ?? "Not Set",
+                        details["sex"] as? String ?? "Not Set",
+                        details["bloodGroup"] as? String ?? "Not Set",
+                        details["stage"] as? String ?? "Not Set",
+                    ]
+                }
+                return Array(repeating: "Not Set", count: 6)
+            }()
             
             cell.textLabel?.text = titles[indexPath.row]
             cell.detailTextLabel?.text = values[indexPath.row]
@@ -199,10 +240,10 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             
             navigationController?.pushViewController(memoryCheckVC, animated: true)
         } else if indexPath.section == 2 {
-            logoutTapped()
+            let loginVC = PatientLoginViewController()
+            loginVC.logoutTapped()
         }
     }
-
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
@@ -218,10 +259,5 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         case 1: return "Regular memory checks help track your progress."
         default: return nil
         }
-    }
-    
-    @objc private func logoutTapped() {
-        print("Logged out")
-        dismiss(animated: true)
     }
 }

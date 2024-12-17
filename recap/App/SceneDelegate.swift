@@ -7,18 +7,33 @@
 
 import UIKit
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+protocol PatientInfoDelegate: AnyObject {
+    func didCompleteProfile()
+}
 
+class SceneDelegate: UIResponder, UIWindowSceneDelegate, PatientInfoDelegate {
     var window: UIWindow?
-
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
-        window.rootViewController = TabbarViewController()
-        window.makeKeyAndVisible()
-        self.window = window
+//        window.rootViewController = TabbarViewController()
+        let launchVC = launchScreenViewController()
         
+//        if UserDefaultsStorageProfile.shared.isLoggedIn() {
+//                // User is logged in, show the main tab bar controller
+//                let tabBarVC = TabbarViewController()
+//                window.rootViewController = tabBarVC
+//            } else {
+//                // User is not logged in, show the welcome screen
+//                let welcomeVC = WelcomeViewController()
+//                let navigationController = UINavigationController(rootViewController: welcomeVC)
+//                window.rootViewController = navigationController
+//            }
+        window.rootViewController = launchVC
+        self.window = window
+        window.makeKeyAndVisible()
+
 //        let questionItem = UIApplicationShortcutItem(
 //            type: "daily-questions",
 //            localizedTitle: "Daily Questions",
@@ -31,9 +46,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //            localizedSubtitle: "View family members",
 //            icon: UIApplicationShortcutIcon(systemImageName: "person.3.fill")
 //            )
-//        
-//        
+//
+//
 //        UIApplication.shared.shortcutItems = [questionItem, familyItem]
+    }
+
+    func didCompleteProfile() {
+        let tabBar = TabbarViewController()
+        UIView.transition(with: window!,
+                          duration: 0.3,
+                          options: .transitionCrossDissolve,
+                          animations: {
+                              self.window?.rootViewController = tabBar
+                          })
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -63,7 +88,4 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
-
-
 }
-

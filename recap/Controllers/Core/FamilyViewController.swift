@@ -8,15 +8,47 @@
 import UIKit
 
 class FamilyViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    private var familyMembers: [FamilyMember] = []
     private var collectionView: UICollectionView!
-    
+
+    private var dataProtocol: FamilyStorageProtocol
+
+    init(
+        storage: FamilyStorageProtocol = UserDefaultsStorageFamilyMember.shared
+    ) {
+        dataProtocol = storage
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        dataProtocol = UserDefaultsStorageFamilyMember.shared
+        super.init(coder: coder)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Family"
-
         view.backgroundColor = .systemBackground
 
         setupUI()
+        loadFamilyMembers()
+        setupNotifications()
+    }
+
+    private func loadFamilyMembers() {
+        familyMembers = dataProtocol.getFamilyMembers()
+        DispatchQueue.main.async { [weak self] in
+            self?.collectionView.reloadData()
+        }
+    }
+
+    private func setupNotifications() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleFamilyMemberAdded),
+            name: Notification.Name("FamilyMemberAdded"),
+            object: nil
+        )
     }
 
     private func setupUI() {
@@ -26,16 +58,16 @@ class FamilyViewController: UIViewController, UICollectionViewDelegate, UICollec
         layout.minimumLineSpacing = 10
         layout.sectionInset = UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 15)
         layout.itemSize = CGSize(width: 170, height: 226)
-        
+
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(FamilyMemberCell.self, forCellWithReuseIdentifier: FamilyMemberCell.identifier)
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = .clear
         collectionView.alwaysBounceVertical = true
-        
+
         view.addSubview(collectionView)
-        
+
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -54,16 +86,14 @@ class FamilyViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
 
     @objc private func handleFamilyMemberAdded() {
-        collectionView.reloadData()
-        
+        loadFamilyMembers()
     }
-
 
     private func GradientBackground() {
         let gradientLayer = CAGradientLayer()
         gradientLayer.colors = [
             UIColor.systemOrange.withAlphaComponent(0.1).cgColor,
-            UIColor.systemBackground.cgColor
+            UIColor.systemBackground.cgColor,
         ]
         gradientLayer.startPoint = CGPoint(x: 0, y: 0)
         gradientLayer.endPoint = CGPoint(x: 0, y: 0.6)
@@ -146,7 +176,13 @@ class FamilyViewController: UIViewController, UICollectionViewDelegate, UICollec
         cell.configure(with: member)
         return cell
     }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadFamilyMembers()
+    }
 }
+
 #Preview() {
     FamilyViewController()
 }

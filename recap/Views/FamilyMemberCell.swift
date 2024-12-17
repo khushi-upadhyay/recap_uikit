@@ -98,12 +98,26 @@ class FamilyMemberCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+//    func configure(with familyMember: FamilyMember) {
+////        imageView.image = UIImage(named: familyMember.imageName)
+//        imageView.sd_setImage(with: URL(string: familyMember.imageURL), placeholderImage: UIImage(named: "placeholder"))
+//        nameLabel.text = familyMember.name
+//        relationshipLabel.text = familyMember.relationship
+//        phoneLabel.text = familyMember.phone
+//    }
+    
     func configure(with familyMember: FamilyMember) {
-//        imageView.image = UIImage(named: familyMember.imageName)
-        imageView.sd_setImage(with: URL(string: familyMember.imageURL), placeholderImage: UIImage(named: "placeholder"))
         nameLabel.text = familyMember.name
         relationshipLabel.text = familyMember.relationship
         phoneLabel.text = familyMember.phone
+        
+        if let savedImage = UserDefaultsStorageFamilyMember.shared.getFamilyMemberImage(
+            for: familyMember.id
+        ) {
+            imageView.image = savedImage
+        } else {
+            imageView.image = UIImage(systemName: "person.circle.fill")
+        }
     }
 }
 

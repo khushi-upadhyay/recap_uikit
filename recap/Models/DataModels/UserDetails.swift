@@ -1,6 +1,6 @@
 import Foundation
 
-struct UserDetails: FireBaseDecodable {
+struct UserDetails:Codable, FireBaseDecodable {
     var firstName: String
     var lastName: String
     var dateOfBirth: String
@@ -8,6 +8,8 @@ struct UserDetails: FireBaseDecodable {
     var bloodGroup: String
     var stage: String
     var profileImageURL: String?
+//    var familyMembers: [FamilyMember] = []
+    var id: String
     
     // Default initializer
     init(firstName: String = "",
@@ -17,6 +19,7 @@ struct UserDetails: FireBaseDecodable {
          bloodGroup: String = "",
          stage: String = "",
          profileImageURL: String? = nil) {
+        self.id = UUID().uuidString
         self.firstName = firstName
         self.lastName = lastName
         self.dateOfBirth = dateOfBirth
@@ -28,6 +31,7 @@ struct UserDetails: FireBaseDecodable {
     
     // FirebaseDecodable initializer
     init(id: String, fireData: Any) {
+        self.id = id
         if let data = fireData as? [String: Any] {
             firstName = data["firstName"] as? String ?? ""
             lastName = data["lastName"] as? String ?? ""
@@ -46,6 +50,24 @@ struct UserDetails: FireBaseDecodable {
             profileImageURL = nil
         }
     }
+    
+    // UserDefaults keys
+        static let userDefaultsKey = "PatientProfile"
+        
+        // Save to UserDefaults
+        func saveToUserDefaults() {
+            if let encoded = try? JSONEncoder().encode(self) {
+                UserDefaults.standard.set(encoded, forKey: UserDetails.userDefaultsKey)
+            }
+        }
+        
+        // Load from UserDefaults
+        static func loadFromUserDefaults() -> UserDetails? {
+            if let data = UserDefaults.standard.data(forKey: userDefaultsKey) {
+                return try? JSONDecoder().decode(UserDetails.self, from: data)
+            }
+            return nil
+        }
 }
 
 
